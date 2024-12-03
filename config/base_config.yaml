@@ -1,0 +1,59 @@
+# Base Configuration File for Malware Research Framework
+
+# General settings
+general:
+  project_name: "Malware Research Framework"
+  data_path: "data/samples/"
+  output_path: "data/reports/"
+  log_level: "DEBUG"
+
+# Feature extraction settings
+feature_extraction:
+  feature_weights:
+    file_size: 2.0
+    entry_point: 1.5
+    image_base: 1.2
+  static_features:
+    enabled: true
+    yara_rules_dir: "data/yara-rules"
+    output_file: "./data/reports/static_features.csv"
+  dynamic_features:
+    enabled: false
+
+# Clustering settings
+clustering:
+  algorithm: "kmeans"  # Options: 'kmeans', 'hdbscan'
+  num_clusters: 5
+  random_state: 42
+  visualize:
+    pca: true
+    tsne: true
+
+# Threat intelligence settings
+threat_intelligence:
+  yara_rules_path: "data/yara_rules/"
+  intelligence_feeds_path: "data/external_feeds/"
+  enable_external_feeds: true
+
+# Anomaly detection settings
+anomaly_detection:
+  enabled: true
+  method: "isolation_forest"  # Options: 'isolation_forest', 'dbscan'
+  contamination: 0.05  # Proportion of outliers in the dataset
+
+# Reporting and visualization settings
+visualization:
+  enable_visualization: true
+  heatmaps: true
+  cluster_plot: true
+  report_format: "html"  # Options: 'html', 'pdf', 'json'
+
+# Workflow-specific settings
+workflows:
+  clustering_analysis:
+    save_intermediate_results: true
+    visualize_clusters: true
+  actor_mapping:
+    match_confidence_threshold: 0.7
+  anomaly_detection:
+    save_anomalies: true
