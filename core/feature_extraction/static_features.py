@@ -3,6 +3,8 @@ import pefile
 import hashlib
 import yara
 import pandas as pd
+import logging
+
 from tqdm import tqdm
 from sklearn.preprocessing import OneHotEncoder
 
@@ -28,7 +30,7 @@ def compile_yara_rules(directory):
                     yara.compile(filepath=rule_path)
                     rule_files[namespace] = rule_path
                 except yara.SyntaxError as e:
-                    print(f"Skipping invalid rule: {rule_path}. Error: {e}")
+                    logging.error(f"Skipping invalid rule: {rule_path}. Error: {e}")
 
     if not rule_files:
         raise FileNotFoundError("No YARA rule files found in the specified directory.")
@@ -95,7 +97,7 @@ def analyze_with_yara(file_path, yara_rules):
         matches = yara_rules.match(file_path)
         return {"yara_matches": [match.rule for match in matches]} if matches else {"yara_matches": []}
     except yara.Error as e:
-        print(f"YARA analysis failed for {file_path}: {e}")
+        logging.error(f"YARA analysis failed for {file_path}: {e}")
         return {"yara_matches": []}
 
 
@@ -120,7 +122,7 @@ def flatten_and_encode_yara(data, column):
 
     # Check if there are any values to encode
     if exploded.empty:
-        print(f"No non-empty values found in column '{column}'. Returning original DataFrame.")
+        logging.error(f"No non-empty values found in column '{column}'. Returning original DataFrame.")
         return data.drop(columns=[column])
 
     # One-hot encode the flattened values
@@ -189,7 +191,7 @@ def extract_static_features(data_path, yara_rules_dir=None):
             results.append(static_features)
 
         except Exception as e:
-            print(f"Error processing {file_path}: {e}")
+            logging.error(f"Error processing {file_path}: {e}")
 
     # Convert results to DataFrame
     features_df = pd.DataFrame(results)

@@ -24,13 +24,3 @@ def kmeans_clustering(data, num_clusters, random_state=42, n_init=10):
     cluster_labels = model.fit_predict(numeric_data)
 
     return model, cluster_labels
-
-def evaluate_clustering(data, cluster_labels):
-    """
-    Evaluate clustering using the silhouette score.
-    """
-    numeric_data = data.select_dtypes(include=["float64", "int64"])
-    if numeric_data.empty:
-        raise ValueError("No numeric data available for clustering. Check the features.")
-    score = silhouette_score(numeric_data, cluster_labels)
-    print(f"\nSilhouette Score: {score:.2f} (Higher is better, range: -1 to 1)")

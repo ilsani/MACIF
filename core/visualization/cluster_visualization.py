@@ -1,8 +1,11 @@
 import os
 import matplotlib.pyplot as plt
+import numpy as np
+import logging
+
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
-import numpy as np
+
 
 
 def visualize_clusters_pca(data, cluster_labels, output_path):
@@ -18,18 +21,20 @@ def visualize_clusters_pca(data, cluster_labels, output_path):
         None
     """
 
+    logging.debug("Visualizing clusters PCA ...")
+
     # Filter numeric data
     numeric_data = data.select_dtypes(include=["float64", "int64"])
     if numeric_data.empty:
         raise ValueError("No numeric data available for clustering. Check the features.")
     
     # Standardize the data
-    print("Standardizing the data...")
+    logging.debug("Standardizing the data...")
     scaler = StandardScaler()
     standardized_data = scaler.fit_transform(numeric_data)
     
     # Perform PCA
-    print("Performing PCA for dimensionality reduction...")
+    logging.debug("Performing PCA for dimensionality reduction...")
     pca = PCA(n_components=2)
     reduced_data = pca.fit_transform(standardized_data)
 
@@ -38,7 +43,7 @@ def visualize_clusters_pca(data, cluster_labels, output_path):
 
     # Calculate explained variance
     explained_variance = pca.explained_variance_ratio_
-    print(f"Explained variance by components: {explained_variance}")
+    logging.debug(f"Explained variance by components: {explained_variance}")
 
     # Create scatter plot
     plt.figure(figsize=(12, 8))
@@ -73,4 +78,4 @@ def visualize_clusters_pca(data, cluster_labels, output_path):
     plot_path = os.path.join(output_path, "pca_clusters.png")
     plt.savefig(plot_path)
     plt.close()
-    print(f"PCA cluster visualization saved to: {plot_path}")
+    logging.info(f"PCA cluster visualization saved to: {plot_path}")

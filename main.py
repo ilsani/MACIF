@@ -1,6 +1,7 @@
 import argparse
 import os
 import yaml
+import logging
 
 from workflows.malware_clustering_analysis import MalwareClusteringWorkflow
 
@@ -20,7 +21,8 @@ def load_config(config_path):
     with open(config_path, "r") as file:
         return yaml.safe_load(file)
     
-def main():
+def main(): 
+    
     parser = argparse.ArgumentParser(
         description="Malware Research Framework: Analyze malware data and generate insights."
     )
