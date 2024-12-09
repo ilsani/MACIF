@@ -100,6 +100,28 @@ class BaseWorkflow:
         """
         cluster_composition = data.groupby(cluster_labels).size()
         cluster_means = data.groupby(cluster_labels).mean()
+        
+        """
+        Calculating the top features by variance in the context of malware sample clustering is useful for several reasons:
+
+        1. Feature Discrimination: Features with high variance across clusters often capture the most distinguishing characteristics of the data.
+        These features vary significantly between clusters, making them useful for identifying the unique properties of each cluster.
+        
+        2. Dimensionality Reduction: By focusing on features with the highest variance, you can reduce the dimensionality of the problem without losing
+        critical information. This simplifies the analysis and can make subsequent steps, like visualization or interpretation, more manageable.
+        
+        3. Improved Interpretability: High-variance features are typically the most impactful in defining cluster boundaries. Highlighting these
+        features helps interpret what aspects of the malware samples are driving the clustering results.
+
+        4. Noise Reduction: Low-variance features tend to contribute less to the clustering process and might represent noise or irrelevant information.
+        Filtering them out improves the clustering quality.
+        
+        5. Efficiency in Downstream Tasks: Tasks like feature engineering, classification, or malware family labeling benefit from focusing
+        on high-variance features, as these are more likely to contribute to meaningful patterns.
+
+        6. Identifying Key Behaviors or Traits: In malware analysis, high-variance features might correspond to critical behaviors or traits of
+        malware (e.g., API calls, network patterns, or opcode sequences) that vary significantly between different families or types.
+        """
         top_features_by_variance = cluster_means.var().sort_values(ascending=False).head(10)
         return cluster_composition, top_features_by_variance
 
@@ -108,7 +130,7 @@ class BaseWorkflow:
         Evaluate clustering quality using the silhouette score.
         """
         score = silhouette_score(data, cluster_labels)
-        logging.info(f"Silhouette Score: {score:.2f} (Higher is better, range: -1 to 1)")
+        return score
 
     def save_results(self, data, cluster_labels, file_suffix="clustering_results"):
         """

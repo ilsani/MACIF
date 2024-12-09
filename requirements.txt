@@ -8,3 +8,4 @@ pyyaml==6.0
 pyod==1.1.0
 yara-python==4.2.3
 tqdm==4.64.1
+adjustText

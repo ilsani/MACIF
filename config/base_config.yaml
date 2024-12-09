@@ -10,7 +10,7 @@ general:
 # Feature extraction settings
 feature_extraction:
   feature_weights:
-    file_size: 2.0
+    file_size: 1.5
     entry_point: 1.5
     image_base: 1.2
   static_features:
@@ -23,7 +23,7 @@ feature_extraction:
 # Clustering settings
 clustering:
   algorithm: "kmeans"  # Options: 'kmeans', 'hdbscan'
-  num_clusters: 5
+  num_clusters: 10
   random_state: 42
   visualize:
     pca: true
