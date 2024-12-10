@@ -132,8 +132,5 @@ def visualize_clusters_pca(data, cluster_labels, output_path):
 
 
     # Save plot
-    os.makedirs(output_path, exist_ok=True)
-    plot_path = os.path.join(output_path, "pca_clusters.png")
-    plt.savefig(plot_path)
+    plt.savefig(output_path)
     plt.close()
-    logging.info(f"PCA cluster visualization saved to: {plot_path}")

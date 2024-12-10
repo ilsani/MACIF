@@ -2,12 +2,14 @@ import pandas as pd
 import os
 import logging
 
+from scipy.stats import spearmanr
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import silhouette_score
 
 from core.clustering.kmeans import kmeans_clustering
 from core.clustering.hdbscan import hdbscan_clustering
 from core.feature_extraction.static_features import extract_static_features
+from sklearn.ensemble import RandomForestClassifier
 # from core.feature_extraction.dynamic_features import extract_dynamic_features
 
 class BaseWorkflow:
@@ -81,65 +83,6 @@ class BaseWorkflow:
             return pd.concat(feature_dfs, axis=1)
         else:
             raise ValueError("No features extracted. Check the data and configuration.")
-
-    def perform_clustering(self, preprocessed_data):
-        """
-        Perform clustering using the specified algorithm.
-        """
-        algorithm = self.config["clustering"]["algorithm"]
-        if algorithm == "kmeans":
-            return kmeans_clustering(preprocessed_data, self.config["clustering"]["num_clusters"], self.config["clustering"]["random_state"])
-        elif algorithm == "hdbscan":
-            return hdbscan_clustering(preprocessed_data, self.config["clustering"].get("min_cluster_size", 5))
-        else:
-            raise ValueError(f"Unsupported clustering algorithm: {algorithm}")
-
-    def analyze_clusters(self, data, cluster_labels):
-        """
-        Analyze clusters to provide insights.
-        """
-        cluster_composition = data.groupby(cluster_labels).size()
-        cluster_means = data.groupby(cluster_labels).mean()
-        
-        """
-        Calculating the top features by variance in the context of malware sample clustering is useful for several reasons:
-
-        1. Feature Discrimination: Features with high variance across clusters often capture the most distinguishing characteristics of the data.
-        These features vary significantly between clusters, making them useful for identifying the unique properties of each cluster.
-        
-        2. Dimensionality Reduction: By focusing on features with the highest variance, you can reduce the dimensionality of the problem without losing
-        critical information. This simplifies the analysis and can make subsequent steps, like visualization or interpretation, more manageable.
-        
-        3. Improved Interpretability: High-variance features are typically the most impactful in defining cluster boundaries. Highlighting these
-        features helps interpret what aspects of the malware samples are driving the clustering results.
-
-        4. Noise Reduction: Low-variance features tend to contribute less to the clustering process and might represent noise or irrelevant information.
-        Filtering them out improves the clustering quality.
-        
-        5. Efficiency in Downstream Tasks: Tasks like feature engineering, classification, or malware family labeling benefit from focusing
-        on high-variance features, as these are more likely to contribute to meaningful patterns.
-
-        6. Identifying Key Behaviors or Traits: In malware analysis, high-variance features might correspond to critical behaviors or traits of
-        malware (e.g., API calls, network patterns, or opcode sequences) that vary significantly between different families or types.
-        """
-        top_features_by_variance = cluster_means.var().sort_values(ascending=False).head(10)
-        return cluster_composition, top_features_by_variance
-
-    def evaluate_clustering(self, data, cluster_labels):
-        """
-        Evaluate clustering quality using the silhouette score.
-        """
-        score = silhouette_score(data, cluster_labels)
-        return score
-
-    def save_results(self, data, cluster_labels, file_suffix="clustering_results"):
-        """
-        Save clustering results to a CSV file.
-        """
-        data["Cluster"] = cluster_labels
-        output_file = os.path.join(self.output_path, f"{file_suffix}.csv")
-        data.to_csv(output_file, index=False)
-        return output_file
 
     def run(self):
         """
